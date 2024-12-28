@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/felipeoli7eira/go-note/note"
-
+	"bufio"
+	"strings"
+	"os"
 )
 
 func main() {
@@ -16,7 +18,15 @@ func main() {
 		return
 	}
 
-	fmt.Println(n)
+	n.Display()
+	saveErr := n.Save()
+
+	if saveErr != nil {
+		fmt.Println(saveErr)
+		return
+	}
+
+	fmt.Println("Saving the note succeeded!")
 }
 
 func getNoteData() (string, string) {
@@ -27,9 +37,17 @@ func getNoteData() (string, string) {
 }
 
 func input(label string) string {
-	fmt.Println(label)
-	var input string
-	fmt.Scanln(&input)
+	fmt.Print(label)
 
-	return input
+	reader := bufio.NewReader(os.Stdin)
+	text, err := reader.ReadString('\n')
+
+	if err != nil {
+		return ""
+	}
+
+	text = strings.TrimSuffix(text, "\n")
+	text = strings.TrimSuffix(text, "\r")
+
+	return text
 }
